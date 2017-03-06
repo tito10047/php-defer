@@ -1,5 +1,5 @@
 # php-defer
-### A php implementation of [defer](https://blog.golang.org/defer-panic-and-recover) statement from [Go](https://golang.org/)
+### A php implementation of [defer](https://golang.org/doc/effective_go.html#defer) statement from [Go](https://golang.org/)
 --------
 
 A defer statement pushes a function call onto a list. The list of saved calls 
@@ -34,9 +34,9 @@ function copyFile($srcName, $dstName){
 }
 ```
 
-This works, but there is a bug. If the call to fopen fails, the function 
+This works, but there is a bug. If the call to open dst file fails or writing failed, the function
 will return without closing the source file. This can be easily remedied by 
-putting a call to fclose before the second return statement, but if the 
+putting a call to fclose before the second and third return statement, but if the
 function were more complex the problem might not be so easily noticed and resolved. 
 By defer statements we can ensure that the files are always closed:
 ```php
@@ -56,7 +56,10 @@ function copyFile($srcName, $dstName){
 	$size=filesize($srcName);
 	while($size>0){
 		$s = $size>1000?1000:$size;
-		fwrite($dst,fread($src,$s));
+		$b=fwrite($dst,fread($src,$s));
+		if ($s!=$b){
+			return false;
+		}
 		$size-=1000;
 	}
 
@@ -64,7 +67,8 @@ function copyFile($srcName, $dstName){
 }
 ```
 
-Defer statements allow us to think about closing each file right after opening it, guaranteeing that, regardless of the number of return statements in the function, the files will be closed.
+Defer statements allow us to think about closing each file right after opening it, guaranteeing
+that, regardless of the number of return statements in the function, the files will be closed.
 
 --------
 The behavior of defer statements is straightforward and predictable. There are three simple rules:
@@ -94,10 +98,11 @@ function b(){
 }
 ```
 
-`3.` *Deferred functions can`t modify return values when is type, but can content of reference to array or object.*
+`3.` *Deferred functions can`t modify return values when is type, but can modify content of
+reference to array or object.*
 
 In this example, a deferred function increments increment `$o->i` *after* the surrounding
-function returns but not modify returned `$i`. Thus, this example print `2-3`:
+function returns but not modify returned `$i`. This example print `2-3`:
 ```php
 function c() {
 	$i=1;
@@ -121,3 +126,47 @@ echo "{$i}-{$o->i}".PHP_EOL;
 - You must always set third parameter in defer function, and must have same name in one closure
 - you can`t pass function declared in scope by name to defer
 
+---
+### Installation
+
+```shell
+composer require mostka/defer 
+```
+
+---
+### Usage
+
+```php
+namespace test;
+
+require_once __DIR__.'/../vendor/autoload.php';
+
+function myFunc(){}
+class Foo{
+	public function myMethod(){}
+}
+function a(){
+	// this is not needed but some IDE show errors if is not here
+	/** @var null $a or can me here only $a=null*/
+	// defer custom function without parameter
+	// function name must be with his namespace
+	defer('test\myFunc',null,$a);
+	// defer function with null parameter
+	defer('var_dump',[null],$a);
+	// defer function with one parameter
+	defer('printf',"test",$a);
+	// defer function with more parameters
+	defer('printf',["%s-%s",10,12],$a);
+	// defer with anonymous function
+	defer(function (){},null,$a);
+	$func = function (){};
+	defer($func,null,$a);
+	//defer method
+	$foo = new Foo();
+	defer([$foo,'myMethod'],null,$a);
+	//this is not working, function has access only in this closure
+	//function foo(){}
+	//defer('foo',null,$a);
+}
+a();
+```
