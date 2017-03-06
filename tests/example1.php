@@ -51,7 +51,10 @@ function copyFile($srcName, $dstName){
 	$size=filesize($srcName);
 	while($size>0){
 		$s = $size>1000?1000:$size;
-		fwrite($dst,fread($src,$s));
+		$b=fwrite($dst,fread($src,$s));
+		if ($s!=$b){
+			return false;
+		}
 		$size-=1000;
 	}
 
