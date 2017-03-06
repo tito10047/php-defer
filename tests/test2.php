@@ -16,21 +16,26 @@ function a(){
 	defer('printf',$i,$e);
 	$i++;
 }
+a();echo PHP_EOL;
 
 function b(){
 	for($i=0;$i<4;$i++){
 		defer('printf',$i,$a);
 	}
 }
+b();echo PHP_EOL;
 
 function c() {
 	$i=1;
-	defer(function () use (&$i) {
+	$o=new \stdClass();
+	$o->i=2;
+	defer(function () use (&$i, $o) {
+		$o->i++;
 		$i++;
-		echo $i.PHP_EOL;
 	},null, $e);
 
-	return $i;
+	$i++;
+	return [$i,$o];
 }
-
-echo c().PHP_EOL;
+list($i,$o) = c();
+echo "{$i}-{$o->i}".PHP_EOL;

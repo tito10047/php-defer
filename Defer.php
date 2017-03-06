@@ -70,10 +70,12 @@ class Defer {
 		$this->destructed=true;
 		call_user_func_array($this->callback,$this->args);
 		if ($this->rootDefender!=null) {
-			foreach (array_reverse($this->rootDefender->prevDefenders) as $defender) {
+			for($i=count($this->rootDefender->prevDefenders)-1;$i>=0;$i--){
 				/** @var self $defender */
+				$defender=$this->rootDefender->prevDefenders[$i];
 				$defender->destructed = true;
 				call_user_func_array($defender->callback, $defender->args);
+				$this->rootDefender->prevDefenders[$i]=null;
 			}
 		}
 	}

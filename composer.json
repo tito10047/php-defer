@@ -1,7 +1,7 @@
 {
   "name": "mostka/defer",
   "license": "Apache-2.0",
-  "description": "A defer statement defers the execution of a function until the surrounding function returns.",
+  "description": "A defer function defers the execution of a function until the surrounding function returns.",
   "keywords": [
     "php","defer"
   ],
@@ -20,32 +20,5 @@
       "Defer.php"
     ],
     "files": ["shortcuts.php"]
-  },
-  "scripts": {
-    "post-update-cmd": "mostka\\Composerator::postUpdate"
-  },
-  "extra": {
-    "dir-names-to-remove": [
-      "examples",
-      "tests",
-      "tools",
-      "doc",
-      "ext",
-      "test",
-      ".github"
-    ],
-    "file-names-to-remove": [
-      ".gitignore",
-      ".travis.yml",
-      "CHANGELOG",
-      "phpunit.xml.dist",
-      "README.rst",
-      "readme.md",
-      "contributing.md",
-      ".gitattributes",
-      "appveyor.yml",
-      ".editorconfig",
-      ".php_cs.dist"
-    ]
   }
 }

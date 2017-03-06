@@ -1,5 +1,5 @@
 # php-defer
-### A php implementation of [defer](https://blog.golang.org/defer-panic-and-recover) statement in [Go](https://golang.org/)
+### A php implementation of [defer](https://blog.golang.org/defer-panic-and-recover) statement from [Go](https://golang.org/)
 --------
 
 A defer statement pushes a function call onto a list. The list of saved calls 
@@ -69,7 +69,7 @@ The behavior of defer statements is straightforward and predictable. There are t
 `1.` *A deferred function's arguments are evaluated when the defer statement is evaluated.*
 
 In this example, the expression "i" is evaluated when the printf call is deferred.
-The deferred call will print "0" after the function returns.
+The deferred call will print `0` after the function returns.
 
 ```php
 function a(){
@@ -82,7 +82,7 @@ function a(){
 `2.` *Deferred function calls are executed in Last In First Out order after the*
 surrounding function returns.
 
-This function prints "3210":
+This function prints `3210`:
 ```php
 function b(){
 	for($i=0;$i<4;$i++){
@@ -91,20 +91,30 @@ function b(){
 }
 ```
 
-`3.` *Deferred functions may read and assign to the returning function's named return values.*
+`3.` *Deferred functions can`t modify return values when is type, but can content of reference to array or object.*
 
-In this example, a deferred function increments the return value i *after* the surrounding
-function returns. Thus, this function returns `1` and print `2`:
+In this example, a deferred function increments increment `$o->i` *after* the surrounding
+function returns but not modify returned `$i`. Thus, this example print `2-3`:
 ```php
 function c() {
 	$i=1;
-	defer(function () use (&$i) {
+	$o=new \stdClass();
+	$o->i=2;
+	defer(function () use (&$i, $o) {
+		$o->i++;
 		$i++;
-		echo $i.PHP_EOL;
 	},null, $e);
 
-	return $i;
+	$i++;
+	return [$i,$o];
 }
+list($i,$o) = c();
+echo "{$i}-{$o->i}".PHP_EOL;
 ```
+---
+### PHP Limitations
 
-This is convenient for modifying the error return value of a function; we will see an example of this shortly.
+- In php defer implementation you cant modify returned value. Can modify only content of returned reference
+- You must always set third parameter in defer function, and must have same name in one closure
+- you can`t pass function declared in scope by name to defer
+
