@@ -7,12 +7,15 @@
  */
 
 /**
- * @param callable $callback
- * @param          $args
- * @param          $e
+ * @param \mostka\Defer|null $e previous defer
+ * @param callable           $callback
+ * @param                    mixed ... $args
  *
  * @throws \Exception
  */
-function defer($callback, $args, &$e){
-	\mostka\Defer::defer($callback, $args, $e);
+function defer(&$e, $callback) {
+	$args = func_get_args();
+	array_shift($args);
+	array_shift($args);
+	\mostka\Defer::deferArr($e, $callback, $args);
 }

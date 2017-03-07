@@ -1,10 +1,42 @@
 # php-defer
 ### A php implementation of [defer](https://golang.org/doc/effective_go.html#defer) statement from [Go](https://golang.org/)
---------
 
-A defer statement pushes a function call onto a list. The list of saved calls 
-is executed after the surrounding function returns. Defer is commonly used to 
+
+A defer statement pushes a function call onto a list. The list of saved calls
+is executed after the surrounding function returns. Defer is commonly used to
 simplify functions that perform various clean-up actions.
+
+#### Quick example
+
+```php
+function foo($a){
+	echo "in defer {$a}".PHP_EOL;
+}
+function a() {
+	echo "before defer".PHP_EOL;
+	defer($e, "foo",1);
+	defer($e, "foo",2);
+	defer($e, "foo",3);
+	echo "after defer".PHP_EOL;
+};
+
+echo "start".PHP_EOL;
+a();
+echo "end".PHP_EOL;
+```
+will print
+```text
+start
+before defer
+after defer
+in defer 3
+in defer 2
+in defer 1
+end
+```
+
+----
+#### Overview
 
 For example, let's look at a function that opens two files and copies the 
 contents of one file to the other:
@@ -45,13 +77,13 @@ function copyFile($srcName, $dstName){
 	if ($src===false){
 		return false;
 	}
-	defer('fclose',$src,$a);
+	defer($a,'fclose',$src);
 
 	$dst = fopen($dstName, 'w');
 	if ($dst===false){
 		return false;
 	}
-	defer('fclose',$dst,$a);
+	defer($a,'fclose',$dst);
 
 	$size=filesize($srcName);
 	while($size>0){
@@ -81,7 +113,7 @@ The deferred call will print `0` after the function returns.
 ```php
 function a(){
 	$i=0;
-	defer('printf',$i,$e);
+	defer($e,'printf',$i);
 	$i++;
 }
 ```
@@ -93,7 +125,7 @@ This function prints `3210`:
 ```php
 function b(){
 	for($i=0;$i<4;$i++){
-		defer('printf',$i,$a);
+		defer($a,'printf',$i);
 	}
 }
 ```
@@ -108,10 +140,10 @@ function c() {
 	$i=1;
 	$o=new \stdClass();
 	$o->i=2;
-	defer(function () use (&$i, $o) {
+	defer($e,function () use (&$i, $o) {
 		$o->i++;
 		$i++;
-	},null, $e);
+	});
 
 	$i++;
 	return [$i,$o];
@@ -150,20 +182,18 @@ function a(){
 	/** @var null $a or can me here only $a=null*/
 	// defer custom function without parameter
 	// function name must be with his namespace
-	defer('test\myFunc',null,$a);
-	// defer function with null parameter
-	defer('var_dump',[null],$a);
+	defer($a,'test\myFunc');
 	// defer function with one parameter
-	defer('printf',"test",$a);
+	defer($a,'printf',"test");
 	// defer function with more parameters
-	defer('printf',["%s-%s",10,12],$a);
+	defer($a,'printf',"%s-%s",10,12);
 	// defer with anonymous function
-	defer(function (){},null,$a);
+	defer($a,function (){});
 	$func = function (){};
-	defer($func,null,$a);
+	defer($a,$func);
 	//defer method
 	$foo = new Foo();
-	defer([$foo,'myMethod'],null,$a);
+	defer($a, [$foo,'myMethod']);
 	//this is not working, function has access only in this closure
 	//function foo(){}
 	//defer('foo',null,$a);
