@@ -9,7 +9,13 @@ A defer statement pushes a function call onto a list. The list of saved calls
 is executed after the surrounding function returns. Defer is commonly used to
 simplify functions that perform various clean-up actions.
 
-#### Quick example
+---
+### Installation
+
+```shell
+composer require tito10074/defer 
+```
+## Quick example
 
 ```php
 function foo($a){
@@ -37,9 +43,7 @@ in defer 2
 in defer 1
 end
 ```
-
-----
-#### Overview
+## Overview
 
 For example, let's look at a function that opens two files and copies the 
 contents of one file to the other:
@@ -162,12 +166,6 @@ echo "{$i}-{$o->i}".PHP_EOL;
 - In php defer implementation you can't modify returned value. Can modify only content of returned reference
 - You need instantiate defer object before use it with ```$defer = new Defer()``` or ```$defer = defer()``` 
 
----
-### Installation
-
-```shell
-composer require tito10074/defer 
-```
 
 ---
 ### Usage
