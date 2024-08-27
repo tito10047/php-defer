@@ -23,9 +23,10 @@ class ShortcutTest extends TestCase
 
     private function testDefer(int &$foo): void
     {
-        defer(function () use (&$foo) {
+        $_ = defer(function () use (&$foo) {
             $foo++;
         });
+        $this->assertSame(0, $foo);
     }
 }
 
