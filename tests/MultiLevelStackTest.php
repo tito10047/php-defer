@@ -20,7 +20,6 @@ class MultiLevelStackTest extends TestCase
         $this->callLevel(1, function ($item) use (&$stack) {
             $stack[] = $item;
         });
-        var_dump($stack);
         for ($level = 3; $level >= 1; $level--) {
             for ($i = 3; $i >= 0; $i--) {
                 $this->assertEquals("{$level}:{$i}", array_shift($stack));
