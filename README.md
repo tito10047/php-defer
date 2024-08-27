@@ -1,3 +1,6 @@
+![Tests](https://github.com/tito10047/php-defer/actions/workflows/unite-test.yml/badge.svg)
+
+
 # php-defer
 ### A php implementation of [defer](https://golang.org/doc/effective_go.html#defer) statement from [Go](https://golang.org/)
 

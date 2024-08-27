@@ -19,7 +19,7 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
         tools: phpunit-bridge
-        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+        extensions: mbstring, xml, ctype, iconv, intl
         coverage: xdebug
 
     -   name: Get composer cache directory
