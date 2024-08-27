@@ -1,4 +1,4 @@
-![Tests](https://github.com/tito10047/php-defer/actions/workflows/unite-test.yml/badge.svg)
+![Tests](https://github.com/tito10047/php-defer/actions/workflows/unit-test.yml/badge.svg)
 
 
 # php-defer
