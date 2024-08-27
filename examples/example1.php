@@ -40,13 +40,13 @@ function copyFile($srcName, $dstName){
 	if ($src===false){
 		return false;
 	}
-	$defer = defer('fclose',$src);
+	$defer = defer(fclose(...),$src);
 
 	$dst = fopen($dstName, 'w');
 	if ($dst===false){
 		return false;
 	}
-    $defer->defer('fclose',$dst);
+    $defer(fclose(...),$dst);
 
 	$size=filesize($srcName);
 	while($size>0){

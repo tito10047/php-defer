@@ -7,14 +7,17 @@ class Defer
 
     private array $callbacks = [];
 
-    public function __construct(callable $callback, mixed ...$args)
+    public function __construct(?callable $callback, mixed ...$args)
     {
         $this->defer($callback, ...$args);
     }
 
 
-    public function defer(callable $callback, mixed ...$args): void
+    public function defer(?callable $callback, mixed ...$args): void
     {
+        if($callback === null){
+            return;
+        }
         $this->callbacks[] = [$callback, $args];;
     }
 

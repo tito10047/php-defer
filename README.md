@@ -125,8 +125,9 @@ surrounding function returns.
 This function prints `3210`:
 ```php
 function b(){
+    $defer = defer();
 	for($i=0;$i<4;$i++){
-		defer(printf(...),$i);
+		$defer(printf(...),$i);
 	}
 }
 ```
@@ -156,6 +157,7 @@ echo "{$i}-{$o->i}".PHP_EOL;
 ### PHP Limitations
 
 - In php defer implementation you can't modify returned value. Can modify only content of returned reference
+- You need instantiate defer object before use it with ```$defer = new Defer()``` or ```$defer = defer()``` 
 
 ---
 ### Installation

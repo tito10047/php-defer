@@ -15,9 +15,9 @@ function foo($a){
 }
 function a() {
 	echo "before defer".PHP_EOL;
-	defer($e, "foo",1);
-	defer($e, "foo",2);
-	defer($e, "foo",3);
+	$defer = defer( "foo",1);
+    $defer( "foo",2);
+    $defer("foo",3);
 	echo "after defer".PHP_EOL;
 };
 a();

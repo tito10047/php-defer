@@ -13,14 +13,15 @@ require_once __DIR__.'/../shortcuts.php';
 
 function a(){
 	$i=0;
-	defer($e,'printf',$i);
+    defer(printf(...),$i);
 	$i++;
 }
 a();echo PHP_EOL;
 
 function b(){
+    $defer = defer();
 	for($i=0;$i<4;$i++){
-		defer($a,'printf',$i);
+        $defer(printf(...),$i);
 	}
 }
 b();echo PHP_EOL;
@@ -29,7 +30,7 @@ function c() {
 	$i=1;
 	$o=new \stdClass();
 	$o->i=2;
-	defer($e,function () use (&$i, $o) {
+    defer(function () use (&$i, $o) {
 		$o->i++;
 		$i++;
 	});
