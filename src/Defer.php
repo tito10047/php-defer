@@ -1,4 +1,5 @@
 <?php
+
 namespace Defer;
 
 
@@ -15,7 +16,7 @@ class Defer
 
     public function defer(?callable $callback, mixed ...$args): void
     {
-        if($callback === null){
+        if ($callback === null) {
             return;
         }
         $this->callbacks[] = [$callback, $args];;
@@ -32,10 +33,10 @@ class Defer
         $this->flush();
     }
 
-    public function flush():void
+    public function flush(): void
     {
-        while([$callback,$args] = array_pop($this->callbacks)){
-            call_user_func_array($callback,$args);
+        while ([$callback, $args] = array_pop($this->callbacks)) {
+            call_user_func_array($callback, $args);
         }
     }
 }

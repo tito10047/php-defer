@@ -8,6 +8,7 @@ PHP defer function schedules a function call (the deferred function) to be run i
 executing the defer returns. It's an unusual but effective way to deal with situations such as resources that must be
 released regardless of which path a function takes to return. The canonical examples are unlocking a mutex or closing a
 file.
+
 ```php
 // Contents returns the file's contents as a string.
 function contents($filename) {
@@ -15,7 +16,7 @@ function contents($filename) {
     if ($f === false) {
         throw new Exception("Error opening the file");
     }
-    defer(fclose(...),$f);  // fclose will run when we're finished.
+    $defer = defer(fclose(...),$f);  // fclose will run when we're finished.
 
     $result = ""; 
 
@@ -33,7 +34,9 @@ function contents($filename) {
 }
 ```
 
-Deferring a call to a function such as Close has two advantages. First, it guarantees that you will never forget to close the file, a mistake that's easy to make if you later edit the function to add a new return path. Second, it means that the close sits near the open, which is much clearer than placing it at the end of the function.
+Deferring a call to a function such as Close has two advantages. First, it guarantees that you will never forget to
+close the file, a mistake that's easy to make if you later edit the function to add a new return path. Second, it means
+that the close sits near the open, which is much clearer than placing it at the end of the function.
 
 ---
 
@@ -47,14 +50,14 @@ composer require tito10074/defer
 
 ```php
 function foo($a){
-	echo "in defer {$a}".PHP_EOL;
+    echo "in defer {$a}".PHP_EOL;
 }
 function a() {
-	echo "before defer".PHP_EOL;
-	$defer = defer(foo(...),1);
-	$defer(foo(...),2);
-	$defer(foo(...),3);
-	echo "after defer".PHP_EOL;
+    echo "before defer".PHP_EOL;
+    $defer = defer(foo(...),1);
+    $defer(foo(...),2);
+    $defer(foo(...),3);
+    echo "after defer".PHP_EOL;
 };
 
 echo "start".PHP_EOL;
@@ -86,9 +89,9 @@ The deferred call will print `0` after the function returns.
 
 ```php
 function a(){
-	$i=0;
-	defer(printf(...),$i);
-	$i++;
+    $i=0;
+    $_ = defer(printf(...),$i);
+    $i++;
 }
 ```
 
@@ -102,9 +105,9 @@ This function prints `3210`:
 ```php
 function b(){
     $defer = defer();
-	for($i=0;$i<4;$i++){
-		$defer(printf(...),$i);
-	}
+    for($i=0;$i<4;$i++){
+        $defer(printf(...),$i);
+    }
 }
 ```
 
@@ -116,16 +119,16 @@ function returns but not modify returned `$i`. This example print `2-3`:
 
 ```php
 function c() {
-	$i=1;
-	$o=new \stdClass();
-	$o->i=2;
-	defer(function () use (&$i, $o) {
-		$o->i++;
-		$i++;
-	});
+    $i=1;
+    $o=new \stdClass();
+    $o->i=2;
+    $defer = defer(function () use (&$i, $o) {
+        $o->i++;
+        $i++;
+    });
 
-	$i++;
-	return [$i,$o];
+    $i++;
+    return [$i,$o];
 }
 list($i,$o) = c();
 echo "{$i}-{$o->i}".PHP_EOL;
@@ -149,23 +152,23 @@ require_once __DIR__.'/../vendor/autoload.php';
 
 function myFunc(){}
 class Foo{
-	public function myMethod(){}
+    public function myMethod(){}
 }
 function a(){
-	// defer custom function without parameter
-	// function name must be with his namespace
-	$defer = defer('test\myFunc');
-	// defer function with one parameter
-	$defer(printf(...),"test");
-	// defer function with more parameters
-	$defer('printf',"%s-%s",10,12);
-	// defer with anonymous function
-	$defer(function (){});
-	$func = function (){};
-	$defer($func);
-	//defer method
-	$foo = new Foo();
-	$defer([$foo,'myMethod']);
+    // defer custom function without parameter
+    // function name must be with his namespace
+    $defer = defer('test\myFunc');
+    // defer function with one parameter
+    $defer(printf(...),"test");
+    // defer function with more parameters
+    $defer('printf',"%s-%s",10,12);
+    // defer with anonymous function
+    $defer(function (){});
+    $func = function (){};
+    $defer($func);
+    //defer method
+    $foo = new Foo();
+    $defer([$foo,'myMethod']);
 }
 a();
 ```

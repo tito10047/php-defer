@@ -3,7 +3,8 @@
   "license": "Apache-2.0",
   "description": "A defer function defers the execution of a function until the surrounding function returns.",
   "keywords": [
-    "php","defer"
+    "php",
+    "defer"
   ],
   "require": {
     "php": ">=8.1"
@@ -19,7 +20,9 @@
     "psr-4": {
       "Defer\\": "src/"
     },
-    "files": ["shortcuts.php"]
+    "files": [
+      "shortcuts.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {

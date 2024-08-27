@@ -5,9 +5,9 @@
  * Date: 27. 8. 2024
  * Time: 14:38
  */
+
 namespace Defer\Tests;
 
-use Defer\Defer;
 use PHPUnit\Framework\TestCase;
 
 
