@@ -1,20 +1,48 @@
 ![Tests](https://github.com/tito10047/php-defer/actions/workflows/unit-test.yml/badge.svg)
 
-
 # php-defer
+
 ### A php implementation of [defer](https://golang.org/doc/effective_go.html#defer) statement from [Go](https://golang.org/)
 
+PHP defer function schedules a function call (the deferred function) to be run immediately before the function
+executing the defer returns. It's an unusual but effective way to deal with situations such as resources that must be
+released regardless of which path a function takes to return. The canonical examples are unlocking a mutex or closing a
+file.
+```php
+// Contents returns the file's contents as a string.
+function contents($filename) {
+    $f = fopen($filename, "r");
+    if ($f === false) {
+        throw new Exception("Error opening the file");
+    }
+    defer(fclose(...),$f);  // fclose will run when we're finished.
 
-A defer statement pushes a function call onto a list. The list of saved calls
-is executed after the surrounding function returns. Defer is commonly used to
-simplify functions that perform various clean-up actions.
+    $result = ""; 
+
+    while (($buffer = fread($f, 100)) !== false) {
+        $result .= $buffer; 
+    }
+
+    if (feof($f) === false) {
+        // $f will be closed if we return here.
+        throw new Exception("Error reading the file");
+    }
+
+    // $f will be closed if we return here.
+    return $result;
+}
+```
+
+Deferring a call to a function such as Close has two advantages. First, it guarantees that you will never forget to close the file, a mistake that's easy to make if you later edit the function to add a new return path. Second, it means that the close sits near the open, which is much clearer than placing it at the end of the function.
 
 ---
+
 ### Installation
 
 ```shell
 composer require tito10074/defer 
 ```
+
 ## Quick example
 
 ```php
@@ -33,7 +61,9 @@ echo "start".PHP_EOL;
 a();
 echo "end".PHP_EOL;
 ```
+
 will print
+
 ```text
 start
 before defer
@@ -43,71 +73,8 @@ in defer 2
 in defer 1
 end
 ```
-## Overview
 
-For example, let's look at a function that opens two files and copies the 
-contents of one file to the other:
-```php
-function copyFile($srcName, $dstName){
-	$src = fopen($srcName, 'r');
-	if ($src===false){
-		return false;
-	}
-	$dst = fopen($dstName, 'w');
-	if ($dst===false){
-		return false;
-	}
-	$size=filesize($srcName);
-	while($size>0){
-		$s = $size>1000?1000:$size;
-		$b=fwrite($dst,fread($src,$s));
-		if ($s!=$b){
-			return false;
-		}
-		$size-=1000;
-	}
-
-	fclose($src);
-	fclose($dst);
-	return true;
-}
-```
-
-This works, but there is a bug. If the call to open dst file fails or writing failed, the function
-will return **without closing the source file**. This can be easily remedied by 
-putting a call to fclose before the second and third return statement, but if the
-function were more complex the problem might not be so easily noticed and resolved. 
-By defer statements we can ensure that the files are always closed:
-```php
-function copyFile($srcName, $dstName){
-	$src = fopen($srcName, 'r');
-	if ($src===false){
-		return false;
-	}
-	$defer = defer(fclose(...),$src);
-
-	$dst = fopen($dstName, 'w');
-	if ($dst===false){
-		return false;
-	}
-	$defer(fclose(...),$dst);
-
-	$size=filesize($srcName);
-	while($size>0){
-		$s = $size>1000?1000:$size;
-		$b=fwrite($dst,fread($src,$s));
-		if ($s!=$b){
-			return false;
-		}
-		$size-=1000;
-	}
-
-	return true;
-}
-```
-
-**Defer** statements **allow** us to think about **closing each file right after opening it**, guaranteeing
-that, regardless of the number of return statements in the function, the files will be closed.
+### 3 Rules
 
 --------
 The behavior of defer statements is straightforward and predictable. There are three simple rules:
@@ -124,12 +91,14 @@ function a(){
 	$i++;
 }
 ```
+
 will print ```000```
 
 `2.` *Deferred function calls are executed in Last In First Out order after the*
 surrounding function returns.
 
 This function prints `3210`:
+
 ```php
 function b(){
     $defer = defer();
@@ -144,6 +113,7 @@ reference to array or object.*
 
 In this example, a deferred function increments increment `$o->i` *after* the surrounding
 function returns but not modify returned `$i`. This example print `2-3`:
+
 ```php
 function c() {
 	$i=1;
@@ -160,14 +130,16 @@ function c() {
 list($i,$o) = c();
 echo "{$i}-{$o->i}".PHP_EOL;
 ```
+
 ---
+
 ### PHP Limitations
 
 - In php defer implementation you can't modify returned value. Can modify only content of returned reference
-- You need instantiate defer object before use it with ```$defer = new Defer()``` or ```$defer = defer()``` 
-
+- You need instantiate defer object before use it with ```$defer = new Defer()``` or ```$defer = defer()```
 
 ---
+
 ### Usage
 
 ```php
