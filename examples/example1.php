@@ -40,13 +40,13 @@ function copyFile($srcName, $dstName){
 	if ($src===false){
 		return false;
 	}
-	defer('fclose',$src,$a);
+	$defer = defer('fclose',$src);
 
 	$dst = fopen($dstName, 'w');
 	if ($dst===false){
 		return false;
 	}
-	defer('fclose',$dst,$a);
+    $defer->defer('fclose',$dst);
 
 	$size=filesize($srcName);
 	while($size>0){
@@ -60,6 +60,3 @@ function copyFile($srcName, $dstName){
 
 	return true;
 }
-
-copyFile(__DIR__.'/example1.php',__DIR__.'/aaa.php');
-

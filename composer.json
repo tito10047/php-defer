@@ -1,5 +1,5 @@
 {
-  "name": "mostka/defer",
+  "name": "tito10047/php-defer",
   "license": "Apache-2.0",
   "description": "A defer function defers the execution of a function until the surrounding function returns.",
   "keywords": [
@@ -8,17 +8,22 @@
   "authors": [
     {
       "name": "Jozef Môstka",
-      "email": "jozef@mostka.com",
+      "email": "jozef@mostka.sk",
       "homepage": "https://github.com/tito10047/php-defer"
     }
   ],
   "autoload": {
     "psr-4": {
-      "mostka\\": "Defer.php"
+      "Defer\\": "src/"
     },
-    "classmap": [
-      "Defer.php"
-    ],
     "files": ["shortcuts.php"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Defer\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
   }
 }
