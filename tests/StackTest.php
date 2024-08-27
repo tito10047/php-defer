@@ -33,4 +33,5 @@ class StackTest extends TestCase
         }
         $defer->defer($callback, $i);
     }
+
 }

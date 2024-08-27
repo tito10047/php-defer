@@ -23,6 +23,6 @@ class GlobalFunctionTest extends TestCase
 
     private function calDefer($param):void
     {
-        $defer = new Defer('fclose',$param);
+        $defer = new Defer(fclose(...),$param);
     }
 }
