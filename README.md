@@ -14,9 +14,9 @@ function foo($a){
 }
 function a() {
 	echo "before defer".PHP_EOL;
-	defer($e, "foo",1);
-	defer($e, "foo",2);
-	defer($e, "foo",3);
+	$defer = defer(foo(...),1);
+	$defer(foo(...),2);
+	$defer(foo(...),3);
 	echo "after defer".PHP_EOL;
 };
 
@@ -67,7 +67,7 @@ function copyFile($srcName, $dstName){
 ```
 
 This works, but there is a bug. If the call to open dst file fails or writing failed, the function
-will return without closing the source file. This can be easily remedied by 
+will return **without closing the source file**. This can be easily remedied by 
 putting a call to fclose before the second and third return statement, but if the
 function were more complex the problem might not be so easily noticed and resolved. 
 By defer statements we can ensure that the files are always closed:
@@ -77,13 +77,13 @@ function copyFile($srcName, $dstName){
 	if ($src===false){
 		return false;
 	}
-	defer($a,'fclose',$src);
+	$defer = defer(fclose(...),$src);
 
 	$dst = fopen($dstName, 'w');
 	if ($dst===false){
 		return false;
 	}
-	defer($a,'fclose',$dst);
+	$defer(fclose(...),$dst);
 
 	$size=filesize($srcName);
 	while($size>0){
@@ -99,7 +99,7 @@ function copyFile($srcName, $dstName){
 }
 ```
 
-Defer statements allow us to think about closing each file right after opening it, guaranteeing
+**Defer** statements **allow** us to think about **closing each file right after opening it**, guaranteeing
 that, regardless of the number of return statements in the function, the files will be closed.
 
 --------
@@ -113,10 +113,11 @@ The deferred call will print `0` after the function returns.
 ```php
 function a(){
 	$i=0;
-	defer($e,'printf',$i);
+	defer(printf(...),$i);
 	$i++;
 }
 ```
+will print ```000```
 
 `2.` *Deferred function calls are executed in Last In First Out order after the*
 surrounding function returns.
@@ -125,7 +126,7 @@ This function prints `3210`:
 ```php
 function b(){
 	for($i=0;$i<4;$i++){
-		defer($a,'printf',$i);
+		defer(printf(...),$i);
 	}
 }
 ```
@@ -140,7 +141,7 @@ function c() {
 	$i=1;
 	$o=new \stdClass();
 	$o->i=2;
-	defer($e,function () use (&$i, $o) {
+	defer(function () use (&$i, $o) {
 		$o->i++;
 		$i++;
 	});
@@ -154,15 +155,13 @@ echo "{$i}-{$o->i}".PHP_EOL;
 ---
 ### PHP Limitations
 
-- In php defer implementation you cant modify returned value. Can modify only content of returned reference
-- You must always set third parameter in defer function, and must have same name in one closure
-- you can`t pass function declared in scope by name to defer
+- In php defer implementation you can't modify returned value. Can modify only content of returned reference
 
 ---
 ### Installation
 
 ```shell
-composer require mostka/defer 
+composer require tito10074/defer 
 ```
 
 ---
@@ -178,25 +177,20 @@ class Foo{
 	public function myMethod(){}
 }
 function a(){
-	// this is not needed but some IDE show errors if is not here
-	/** @var null $a or can me here only $a=null*/
 	// defer custom function without parameter
 	// function name must be with his namespace
-	defer($a,'test\myFunc');
+	$defer = defer('test\myFunc');
 	// defer function with one parameter
-	defer($a,'printf',"test");
+	$defer(printf(...),"test");
 	// defer function with more parameters
-	defer($a,'printf',"%s-%s",10,12);
+	$defer('printf',"%s-%s",10,12);
 	// defer with anonymous function
-	defer($a,function (){});
+	$defer(function (){});
 	$func = function (){};
-	defer($a,$func);
+	$defer($func);
 	//defer method
 	$foo = new Foo();
-	defer($a, [$foo,'myMethod']);
-	//this is not working, function has access only in this closure
-	//function foo(){}
-	//defer('foo',null,$a);
+	$defer([$foo,'myMethod']);
 }
 a();
 ```

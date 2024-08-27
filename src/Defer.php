@@ -18,6 +18,12 @@ class Defer
         $this->callbacks[] = [$callback, $args];;
     }
 
+    public function __invoke(callable $callback, mixed ...$args): void
+    {
+        $this->defer($callback, ...$args);
+    }
+
+
     function __destruct()
     {
         $this->flush();
