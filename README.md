@@ -43,7 +43,7 @@ that the close sits near the open, which is much clearer than placing it at the 
 ### Installation
 
 ```shell
-composer require tito10074/defer 
+composer require tito10047/defer 
 ```
 
 ## Quick example
