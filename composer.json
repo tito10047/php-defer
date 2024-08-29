@@ -2,6 +2,7 @@
   "name": "tito10047/php-defer",
   "license": "Apache-2.0",
   "description": "A defer function defers the execution of a function until the surrounding function returns.",
+  "minimum-stability": "stable",
   "keywords": [
     "php",
     "defer"
