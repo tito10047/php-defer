@@ -44,7 +44,7 @@ jobs:
       # Docs: https://getcomposer.org/doc/articles/scripts.md
 
       - name: Run test suite
-        run: vendor/bin/phpunit --no-configuration ./tests --coverage-clover build/reports/clover.xml
+        run: vendor/bin/phpunit --coverage-clover build/reports/clover.xml
 
       - name: Upload coverage results to Coveralls
         env:
