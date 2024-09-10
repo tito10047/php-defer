@@ -1,4 +1,5 @@
 ![Tests](https://github.com/tito10047/php-defer/actions/workflows/unit-test.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/tito10047/php-defer/badge.svg?branch=master)](https://coveralls.io/github/tito10047/php-defer?branch=master)
 
 # php-defer
 
