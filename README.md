@@ -1,6 +1,32 @@
 ![Tests](https://github.com/tito10047/php-defer/actions/workflows/unit-test.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/tito10047/php-defer/badge.svg?branch=master)](https://coveralls.io/github/tito10047/php-defer?branch=master)
 
+## In short
+
+Defer lets you schedule a cleanup action to run at the end of the current function/block. Use it right after acquiring a resource so you never forget to release it, even if you return early or an exception is thrown. Typical use cases include closing files, unlocking mutexes, or rolling back transactions.
+
+Example:
+
+```php
+function writeSomething(string $filename): void {
+    $fh = fopen($filename, 'a');
+    if ($fh === false) {
+        throw new RuntimeException('Cannot open file');
+    }
+    $defer = defer(fclose(...), $fh); // will run when the function returns
+
+    fwrite($fh, "hello\n");
+
+    if (rand(0, 1)) {
+        return; // fclose($fh) is still guaranteed to run
+    }
+
+    // more work...
+    
+    return; // fclose($fh) is still guaranteed to run
+}
+```
+
 # php-defer
 
 ### A php implementation of [defer](https://golang.org/doc/effective_go.html#defer) statement from [Go](https://golang.org/)
